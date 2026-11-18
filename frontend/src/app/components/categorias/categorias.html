@@ -1,0 +1,121 @@
+<div class="container-fluid px-4 py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="fw-bold mb-1">
+        <i class="bi bi-tags text-primary me-2"></i>Gestión de Categorías Financieras
+      </h2>
+      <p class="text-muted mb-0">
+        Controlador: <code>RestCuentaController</code> | Operaciones: <code>GET /api/cuentas/categorias</code> y <code>POST /api/cuentas/categorias</code>.
+      </p>
+    </div>
+    <button class="btn btn-outline-secondary btn-sm" (click)="cargarCategorias()">
+      <i class="bi bi-arrow-clockwise me-1"></i> Recargar
+    </button>
+  </div>
+
+  <!-- Alertas globales -->
+  <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="bi bi-check-circle-fill me-2"></i>{{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage = ''" aria-label="Close"></button>
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+  </div>
+
+  <div class="row g-4">
+    <!-- Columna Izquierda: Formulario 8 (Template-driven Form) -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm border-primary">
+        <div class="card-header bg-primary text-white py-3">
+          <span class="badge bg-light text-primary float-end">Formulario 8</span>
+          <h5 class="card-title mb-0">
+            <i class="bi bi-tag me-2"></i>Nueva Categoría
+          </h5>
+          <small class="opacity-75">Template-driven Form | POST /api/cuentas/categorias</small>
+        </div>
+        <div class="card-body p-4">
+          <form #catForm="ngForm" (ngSubmit)="onSubmit(catForm)" novalidate>
+            <div class="mb-3">
+              <label for="nombreCat" class="form-label fw-semibold">Nombre de la Categoría *</label>
+              <input
+                type="text"
+                id="nombreCat"
+                name="nombreCat"
+                class="form-control"
+                [(ngModel)]="nuevaCategoria.nombre"
+                #nombreCatModel="ngModel"
+                required
+                minlength="2"
+                placeholder="Ej: Alimentación, Servicios..."
+              />
+              <div *ngIf="nombreCatModel.invalid && (nombreCatModel.dirty || nombreCatModel.touched)" class="text-danger small mt-1">
+                El nombre es requerido (mínimo 2 caracteres).
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="tipoCat" class="form-label fw-semibold">Tipo de Flujo *</label>
+              <select id="tipoCat" name="tipoCat" class="form-select" [(ngModel)]="nuevaCategoria.tipo" required>
+                <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" [disabled]="catForm.invalid">
+              <i class="bi bi-plus-circle me-2"></i>Registrar Categoría
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna Derecha: Listado de Categorías -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0 fw-bold">
+            <i class="bi bi-tags-fill text-primary me-2"></i>Categorías Registradas
+          </h5>
+          <span class="badge bg-primary rounded-pill">{{ categorias.length }} categorías</span>
+        </div>
+        <div class="card-body p-0">
+          <div *ngIf="isLoading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="text-muted mt-2">Consultando categorías...</p>
+          </div>
+
+          <div *ngIf="!isLoading" class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 70px;">ID</th>
+                  <th>Nombre</th>
+                  <th>Tipo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let c of categorias">
+                  <td class="text-muted fw-bold">#{{ c.id }}</td>
+                  <td class="fw-semibold">{{ c.nombre }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="{'bg-success': c.tipo === 'INGRESO', 'bg-danger': c.tipo === 'GASTO'}">
+                      {{ c.tipo }}
+                    </span>
+                  </td>
+                </tr>
+                <tr *ngIf="categorias.length === 0">
+                  <td colspan="3" class="text-center py-5 text-muted">
+                    <i class="bi bi-tag fs-2 d-block mb-2"></i>
+                    No hay categorías registradas. Cree una en el <strong>Formulario 8</strong>.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

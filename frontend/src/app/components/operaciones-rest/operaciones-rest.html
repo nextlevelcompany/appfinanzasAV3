@@ -1,0 +1,221 @@
+<div class="container-fluid px-4 py-4">
+  <div class="mb-4">
+    <h2 class="fw-bold mb-1">
+      <i class="bi bi-clipboard-data text-primary me-2"></i>Matriz de Operaciones REST & Formularios Angular
+    </h2>
+    <p class="text-muted mb-0">
+      Avance de Proyecto Final 3 (APF3) - Desarrollo Web Integrado UTP. Demostración de rúbrica calificada.
+    </p>
+  </div>
+
+  <!-- Resumen de Cumplimiento de Rúbrica -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card border-primary h-100 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-primary fs-6">8 Puntos</span>
+            <i class="bi bi-check-all text-primary fs-3"></i>
+          </div>
+          <h5 class="fw-bold">Operaciones REST</h5>
+          <p class="text-muted small mb-1">
+            <strong>Exigencia:</strong> Al menos 8 operaciones en 2 controladores.<br>
+            <strong>Implementado:</strong> 17 operaciones REST útiles (8 en <code>RestCuentaController</code>, 7 en <code>RestTransaccionController</code> y 2 en <code>AuthController</code>).
+          </p>
+          <span class="badge bg-success">Cumplido 100%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card border-success h-100 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-success fs-6">8 Puntos</span>
+            <i class="bi bi-ui-checks text-success fs-3"></i>
+          </div>
+          <h5 class="fw-bold">Formularios Angular</h5>
+          <p class="text-muted small mb-1">
+            <strong>Exigencia:</strong> Al menos 6 formularios en funcionamiento.<br>
+            <strong>Implementado:</strong> 8 formularios funcionales con validaciones completas (4 Template-driven con <code>FormsModule</code> y 4 Reactivos con <code>ReactiveFormsModule</code>).
+          </p>
+          <span class="badge bg-success">Cumplido 100%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card border-info h-100 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-info text-dark fs-6">4 Puntos</span>
+            <i class="bi bi-easel text-info fs-3"></i>
+          </div>
+          <h5 class="fw-bold">Presentación & Claridad</h5>
+          <p class="text-muted small mb-1">
+            <strong>Exigencia:</strong> Presentación clara y sin inconvenientes.<br>
+            <strong>Implementado:</strong> Diseño moderno responsivo, mensajes de retroalimentación, interceptor JWT automático y panel de verificación en vivo.
+          </p>
+          <span class="badge bg-success">Cumplido 100%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de los 8 Formularios -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white py-3">
+      <h5 class="card-title mb-0 fw-bold">
+        <i class="bi bi-ui-checks-grid text-warning me-2"></i>Inventario de los 8 Formularios Implementados en Angular
+      </h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 50px;">#</th>
+              <th>Nombre del Formulario</th>
+              <th>Enfoque Angular</th>
+              <th>Módulo Angular</th>
+              <th>Campos y Validaciones</th>
+              <th>Operación Invocada</th>
+              <th>Ubicación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1</strong></td>
+              <td class="fw-semibold">Iniciar Sesión (Login)</td>
+              <td><span class="badge bg-info text-dark">Template-driven</span></td>
+              <td><code>FormsModule</code> (ngForm, ngModel)</td>
+              <td>Username (required), Password (required)</td>
+              <td><code>POST /auth/login</code></td>
+              <td>Vista <code>/login</code></td>
+            </tr>
+            <tr>
+              <td><strong>2</strong></td>
+              <td class="fw-semibold">Registro de Usuario</td>
+              <td><span class="badge bg-success">Reactivo</span></td>
+              <td><code>ReactiveFormsModule</code> (FormBuilder)</td>
+              <td>Username (min 3, max 80), Password (min 8), Confirmación coincidente</td>
+              <td><code>POST /auth/register</code></td>
+              <td>Vista <code>/login</code></td>
+            </tr>
+            <tr>
+              <td><strong>3</strong></td>
+              <td class="fw-semibold">Registrar Cuenta Financiera</td>
+              <td><span class="badge bg-success">Reactivo</span></td>
+              <td><code>ReactiveFormsModule</code> (FormGroup)</td>
+              <td>Nombre (min 3), Tipo (select), Moneda (select), Saldo (min 0)</td>
+              <td><code>POST /api/cuentas</code></td>
+              <td>Vista <code>/cuentas</code></td>
+            </tr>
+            <tr>
+              <td><strong>4</strong></td>
+              <td class="fw-semibold">Modificar / Actualizar Cuenta</td>
+              <td><span class="badge bg-info text-dark">Template-driven</span></td>
+              <td><code>FormsModule</code> (ngForm, ngModel)</td>
+              <td>ID (hidden/disabled), Nombre (min 3), Tipo, Moneda, Saldo >= 0</td>
+              <td><code>PUT /api/cuentas/&#123;id&#125;</code></td>
+              <td>Vista <code>/cuentas</code></td>
+            </tr>
+            <tr>
+              <td><strong>5</strong></td>
+              <td class="fw-semibold">Registrar Transacción</td>
+              <td><span class="badge bg-success">Reactivo</span></td>
+              <td><code>ReactiveFormsModule</code> (FormGroup)</td>
+              <td>Descripción (min 3), Monto (> 0), Tipo (radio), Categoría, Fecha</td>
+              <td><code>POST /api/transacciones</code></td>
+              <td>Vista <code>/transacciones</code></td>
+            </tr>
+            <tr>
+              <td><strong>6</strong></td>
+              <td class="fw-semibold">Filtro por Rango de Fechas</td>
+              <td><span class="badge bg-info text-dark">Template-driven</span></td>
+              <td><code>FormsModule</code> (ngForm)</td>
+              <td>Fecha Desde (required), Fecha Hasta (required, >= Desde)</td>
+              <td><code>GET /api/transacciones/rango</code></td>
+              <td>Vista <code>/transacciones</code></td>
+            </tr>
+            <tr>
+              <td><strong>7</strong></td>
+              <td class="fw-semibold">Filtro por Tipo y Categoría</td>
+              <td><span class="badge bg-success">Reactivo</span></td>
+              <td><code>ReactiveFormsModule</code> (FormGroup)</td>
+              <td>Tipo (select: TODOS, INGRESO, GASTO), Categoría (texto)</td>
+              <td><code>GET /api/transacciones/tipo & /categoria</code></td>
+              <td>Vista <code>/transacciones</code></td>
+            </tr>
+            <tr>
+              <td><strong>8</strong></td>
+              <td class="fw-semibold">Registrar Categoría</td>
+              <td><span class="badge bg-info text-dark">Template-driven</span></td>
+              <td><code>FormsModule</code> (ngForm)</td>
+              <td>Nombre de categoría (min 2), Tipo (INGRESO o GASTO)</td>
+              <td><code>POST /api/cuentas/categorias</code></td>
+              <td>Vista <code>/categorias</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de Operaciones REST -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white py-3 d-flex justify-content-between align-items-center">
+      <h5 class="card-title mb-0 fw-bold">
+        <i class="bi bi-hdd-network text-warning me-2"></i>Matriz de Operaciones REST del Backend (Para Excel 262UWIN-AVANCE3.xlsx)
+      </h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 40px;">#</th>
+              <th>Controlador Backend</th>
+              <th style="width: 80px;">Método</th>
+              <th>Ruta / Endpoint</th>
+              <th>Descripción y Utilidad para el Proyecto</th>
+              <th>Invocación desde Angular</th>
+              <th class="text-center" style="width: 140px;">Test en Vivo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let op of operaciones">
+              <td class="text-muted fw-bold">{{ op.id }}</td>
+              <td><code>{{ op.controlador }}</code></td>
+              <td>
+                <span class="badge" [ngClass]="{
+                  'bg-primary': op.metodo === 'GET',
+                  'bg-success': op.metodo === 'POST',
+                  'bg-warning text-dark': op.metodo === 'PUT',
+                  'bg-danger': op.metodo === 'DELETE'
+                }">
+                  {{ op.metodo }}
+                </span>
+              </td>
+              <td><code>{{ op.ruta }}</code></td>
+              <td><small>{{ op.descripcion }}</small></td>
+              <td>
+                <small class="d-block text-primary fw-semibold">{{ op.servicioAngular }}</small>
+                <small class="text-muted">{{ op.formularioAsociado }}</small>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-outline-primary btn-sm" (click)="probarOperacion(op)">
+                  <i class="bi bi-play-circle me-1"></i> Probar
+                </button>
+                <div *ngIf="op.estadoPrueba" class="mt-2 text-start">
+                  <div *ngIf="op.estadoPrueba === 'probando'" class="spinner-border spinner-border-sm text-primary"></div>
+                  <pre *ngIf="op.respuestaPrueba" class="p-2 bg-light border rounded small mt-1" style="max-height: 120px; overflow: auto; font-size: 0.72rem;">{{ op.respuestaPrueba }}</pre>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

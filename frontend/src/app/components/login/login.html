@@ -1,0 +1,176 @@
+<div class="container py-5">
+  <div class="row text-center mb-4">
+    <div class="col-12">
+      <h2 class="fw-bold text-primary">
+        <i class="bi bi-shield-lock me-2"></i>Acceso al Sistema AppFinanzas
+      </h2>
+      <p class="text-muted">
+        Inicie sesión para acceder a las operaciones REST protegidas con autenticación JWT o cree una nueva cuenta.
+      </p>
+    </div>
+  </div>
+
+  <div class="row g-4 justify-content-center">
+    <!-- Formulario 1: Template-Driven Form (Login) -->
+    <div class="col-lg-5 col-md-6">
+      <div class="card h-100 shadow-sm border-primary">
+        <div class="card-header bg-primary text-white py-3">
+          <span class="badge bg-light text-primary float-end">Formulario 1</span>
+          <h5 class="card-title mb-0">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+          </h5>
+          <small class="opacity-75">Template-driven Form (FormsModule) | POST /auth/login</small>
+        </div>
+        <div class="card-body p-4">
+          <!-- Alertas -->
+          <div *ngIf="loginSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>{{ loginSuccess }}
+          </div>
+          <div *ngIf="loginError" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ loginError }}
+          </div>
+
+          <form #loginForm="ngForm" (ngSubmit)="onLoginSubmit(loginForm)" novalidate>
+            <div class="mb-3">
+              <label for="loginUsername" class="form-label fw-semibold">Nombre de Usuario *</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                <input
+                  type="text"
+                  id="loginUsername"
+                  name="loginUsername"
+                  class="form-control"
+                  [(ngModel)]="loginData.username"
+                  #usernameModel="ngModel"
+                  required
+                  placeholder="Ej: ruta-user"
+                />
+              </div>
+              <div *ngIf="usernameModel.invalid && (usernameModel.dirty || usernameModel.touched)" class="text-danger small mt-1">
+                El usuario es requerido.
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="loginPassword" class="form-label fw-semibold">Contraseña *</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-key"></i></span>
+                <input
+                  type="password"
+                  id="loginPassword"
+                  name="loginPassword"
+                  class="form-control"
+                  [(ngModel)]="loginData.password"
+                  #passwordModel="ngModel"
+                  required
+                  placeholder="Ingrese su contraseña"
+                />
+              </div>
+              <div *ngIf="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched)" class="text-danger small mt-1">
+                La contraseña es requerida.
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" [disabled]="loginForm.invalid || isLoadingLogin">
+              <span *ngIf="isLoadingLogin" class="spinner-border spinner-border-sm me-2" role="status"></span>
+              <i *ngIf="!isLoadingLogin" class="bi bi-box-arrow-in-right me-2"></i>
+              Ingresar al Sistema
+            </button>
+          </form>
+
+          <div class="alert alert-info mt-4 mb-0 small">
+            <strong>Credenciales de prueba sugeridas:</strong><br />
+            Usuario: <code>ruta-user</code> | Clave: <code>secreto123</code> (o regístrese al lado).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario 2: Reactive Form (Registro) -->
+    <div class="col-lg-5 col-md-6">
+      <div class="card h-100 shadow-sm border-success">
+        <div class="card-header bg-success text-white py-3">
+          <span class="badge bg-light text-success float-end">Formulario 2</span>
+          <h5 class="card-title mb-0">
+            <i class="bi bi-person-plus me-2"></i>Registrar Nuevo Usuario
+          </h5>
+          <small class="opacity-75">Reactive Form (ReactiveFormsModule) | POST /auth/register</small>
+        </div>
+        <div class="card-body p-4">
+          <!-- Alertas -->
+          <div *ngIf="registerSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>{{ registerSuccess }}
+          </div>
+          <div *ngIf="registerError" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ registerError }}
+          </div>
+
+          <form [formGroup]="registroForm" (ngSubmit)="onRegisterSubmit()" novalidate>
+            <div class="mb-3">
+              <label for="regUsername" class="form-label fw-semibold">Nombre de Usuario *</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                <input
+                  type="text"
+                  id="regUsername"
+                  formControlName="username"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': registroForm.get('username')?.invalid && (registroForm.get('username')?.dirty || registroForm.get('username')?.touched)}"
+                  placeholder="Mínimo 3 caracteres"
+                />
+              </div>
+              <div *ngIf="registroForm.get('username')?.invalid && (registroForm.get('username')?.dirty || registroForm.get('username')?.touched)" class="text-danger small mt-1">
+                <span *ngIf="registroForm.get('username')?.errors?.['required']">El usuario es requerido.</span>
+                <span *ngIf="registroForm.get('username')?.errors?.['minlength']">Mínimo 3 caracteres.</span>
+                <span *ngIf="registroForm.get('username')?.errors?.['maxlength']">Máximo 80 caracteres.</span>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="regPassword" class="form-label fw-semibold">Contraseña *</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                <input
+                  type="password"
+                  id="regPassword"
+                  formControlName="password"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': registroForm.get('password')?.invalid && (registroForm.get('password')?.dirty || registroForm.get('password')?.touched)}"
+                  placeholder="Mínimo 8 caracteres"
+                />
+              </div>
+              <div *ngIf="registroForm.get('password')?.invalid && (registroForm.get('password')?.dirty || registroForm.get('password')?.touched)" class="text-danger small mt-1">
+                <span *ngIf="registroForm.get('password')?.errors?.['required']">La contraseña es requerida.</span>
+                <span *ngIf="registroForm.get('password')?.errors?.['minlength']">Debe tener al menos 8 caracteres.</span>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="regConfirmPassword" class="form-label fw-semibold">Confirmar Contraseña *</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                <input
+                  type="password"
+                  id="regConfirmPassword"
+                  formControlName="confirmPassword"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': registroForm.hasError('passwordMismatch') && (registroForm.get('confirmPassword')?.dirty || registroForm.get('confirmPassword')?.touched)}"
+                  placeholder="Repita la contraseña"
+                />
+              </div>
+              <div *ngIf="registroForm.hasError('passwordMismatch') && (registroForm.get('confirmPassword')?.dirty || registroForm.get('confirmPassword')?.touched)" class="text-danger small mt-1">
+                Las contraseñas no coinciden.
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100 py-2 fw-semibold" [disabled]="registroForm.invalid || isLoadingRegister">
+              <span *ngIf="isLoadingRegister" class="spinner-border spinner-border-sm me-2" role="status"></span>
+              <i *ngIf="!isLoadingRegister" class="bi bi-person-check me-2"></i>
+              Crear Cuenta
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

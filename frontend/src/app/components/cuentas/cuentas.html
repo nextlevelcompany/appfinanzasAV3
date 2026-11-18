@@ -1,0 +1,241 @@
+<div class="container-fluid px-4 py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="fw-bold mb-1">
+        <i class="bi bi-bank text-primary me-2"></i>Gestión de Cuentas Financieras
+      </h2>
+      <p class="text-muted mb-0">
+        Controlador: <code>RestCuentaController</code> (/api/cuentas) | Operaciones: GET, POST, PUT, DELETE.
+      </p>
+    </div>
+    <button class="btn btn-outline-secondary btn-sm" (click)="cargarCuentas()">
+      <i class="bi bi-arrow-clockwise me-1"></i> Recargar
+    </button>
+  </div>
+
+  <!-- Alertas globales -->
+  <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="bi bi-check-circle-fill me-2"></i>{{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage = ''" aria-label="Close"></button>
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+  </div>
+
+  <div class="row g-4">
+    <!-- Columna Izquierda: Formularios -->
+    <div class="col-lg-5">
+      <!-- FORMULARIO 3: Crear Cuenta (Reactive Form) -->
+      <div class="card shadow-sm border-primary mb-4">
+        <div class="card-header bg-primary text-white py-3">
+          <span class="badge bg-light text-primary float-end">Formulario 3</span>
+          <h5 class="card-title mb-0">
+            <i class="bi bi-plus-circle me-2"></i>Nueva Cuenta Financiera
+          </h5>
+          <small class="opacity-75">Reactive Form | POST /api/cuentas</small>
+        </div>
+        <div class="card-body p-4">
+          <form [formGroup]="crearCuentaForm" (ngSubmit)="onCrearSubmit()" novalidate>
+            <div class="mb-3">
+              <label for="nombreCuenta" class="form-label fw-semibold">Nombre de la Cuenta *</label>
+              <input
+                type="text"
+                id="nombreCuenta"
+                formControlName="nombre"
+                class="form-control"
+                [ngClass]="{'is-invalid': crearCuentaForm.get('nombre')?.invalid && (crearCuentaForm.get('nombre')?.dirty || crearCuentaForm.get('nombre')?.touched)}"
+                placeholder="Ej: BCP Ahorros Sueldo"
+              />
+              <div *ngIf="crearCuentaForm.get('nombre')?.invalid && (crearCuentaForm.get('nombre')?.dirty || crearCuentaForm.get('nombre')?.touched)" class="text-danger small mt-1">
+                <span *ngIf="crearCuentaForm.get('nombre')?.errors?.['required']">El nombre es obligatorio.</span>
+                <span *ngIf="crearCuentaForm.get('nombre')?.errors?.['minlength']">Mínimo 3 caracteres.</span>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="tipoCuenta" class="form-label fw-semibold">Tipo *</label>
+                <select id="tipoCuenta" formControlName="tipo" class="form-select">
+                  <option *ngFor="let t of tiposCuenta" [value]="t">{{ t }}</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label for="monedaCuenta" class="form-label fw-semibold">Moneda *</label>
+                <select id="monedaCuenta" formControlName="moneda" class="form-select">
+                  <option *ngFor="let m of monedas" [value]="m">{{ m }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="saldoCuenta" class="form-label fw-semibold">Saldo Inicial *</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="saldoCuenta"
+                  formControlName="saldo"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': crearCuentaForm.get('saldo')?.invalid && (crearCuentaForm.get('saldo')?.dirty || crearCuentaForm.get('saldo')?.touched)}"
+                  placeholder="0.00"
+                />
+              </div>
+              <div *ngIf="crearCuentaForm.get('saldo')?.invalid && (crearCuentaForm.get('saldo')?.dirty || crearCuentaForm.get('saldo')?.touched)" class="text-danger small mt-1">
+                El saldo no puede ser negativo (mínimo 0).
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" [disabled]="crearCuentaForm.invalid || isCreando">
+              <span *ngIf="isCreando" class="spinner-border spinner-border-sm me-2" role="status"></span>
+              <i *ngIf="!isCreando" class="bi bi-save me-2"></i>
+              <span *ngIf="isCreando">Guardando cuenta...</span>
+              <span *ngIf="!isCreando">Registrar Cuenta</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- FORMULARIO 4: Editar Cuenta (Template-driven Form) -->
+      <div id="formEdicionSection" class="card shadow-sm border-warning" *ngIf="modoEdicion">
+        <div class="card-header bg-warning text-dark py-3">
+          <span class="badge bg-dark text-white float-end">Formulario 4</span>
+          <h5 class="card-title mb-0">
+            <i class="bi bi-pencil-square me-2"></i>Modificar Cuenta (ID: {{ cuentaEnEdicion.id }})
+          </h5>
+          <small class="text-muted">Template-driven Form | PUT /api/cuentas/&#123;id&#125;</small>
+        </div>
+        <div class="card-body p-4">
+          <form #editForm="ngForm" (ngSubmit)="onActualizarSubmit(editForm)" novalidate>
+            <div class="mb-3">
+              <label for="editNombre" class="form-label fw-semibold">Nombre *</label>
+              <input
+                type="text"
+                id="editNombre"
+                name="editNombre"
+                class="form-control"
+                [(ngModel)]="cuentaEnEdicion.nombre"
+                #editNombreModel="ngModel"
+                required
+                minlength="3"
+              />
+              <div *ngIf="editNombreModel.invalid && (editNombreModel.dirty || editNombreModel.touched)" class="text-danger small mt-1">
+                El nombre es requerido (mínimo 3 caracteres).
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="editTipo" class="form-label fw-semibold">Tipo *</label>
+                <select id="editTipo" name="editTipo" class="form-select" [(ngModel)]="cuentaEnEdicion.tipo" required>
+                  <option *ngFor="let t of tiposCuenta" [value]="t">{{ t }}</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label for="editMoneda" class="form-label fw-semibold">Moneda *</label>
+                <select id="editMoneda" name="editMoneda" class="form-select" [(ngModel)]="cuentaEnEdicion.moneda" required>
+                  <option *ngFor="let m of monedas" [value]="m">{{ m }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="editSaldo" class="form-label fw-semibold">Saldo *</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                id="editSaldo"
+                name="editSaldo"
+                class="form-control"
+                [(ngModel)]="cuentaEnEdicion.saldo"
+                #editSaldoModel="ngModel"
+                required
+              />
+              <div *ngIf="editSaldoModel.invalid && (editSaldoModel.dirty || editSaldoModel.touched)" class="text-danger small mt-1">
+                El saldo no puede ser negativo.
+              </div>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-warning flex-fill fw-semibold" [disabled]="editForm.invalid || isActualizando">
+                <span *ngIf="isActualizando" class="spinner-border spinner-border-sm me-1" role="status"></span>
+                <i *ngIf="!isActualizando" class="bi bi-check-lg me-1"></i>
+                <span *ngIf="isActualizando">Guardando...</span>
+                <span *ngIf="!isActualizando">Guardar Cambios</span>
+              </button>
+              <button type="button" class="btn btn-outline-secondary" (click)="cancelarEdicion()">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna Derecha: Listado de Cuentas (GET /api/cuentas) -->
+    <div class="col-lg-7">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0 fw-bold">
+            <i class="bi bi-card-checklist text-primary me-2"></i>Cuentas Registradas en el Sistema
+          </h5>
+          <span class="badge bg-primary rounded-pill">{{ cuentas.length }} cuentas</span>
+        </div>
+        <div class="card-body p-0">
+          <div *ngIf="isLoading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="text-muted mt-2">Consultando GET /api/cuentas...</p>
+          </div>
+
+          <div *ngIf="!isLoading" class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 60px;">ID</th>
+                  <th>Nombre</th>
+                  <th>Tipo</th>
+                  <th>Moneda</th>
+                  <th class="text-end">Saldo</th>
+                  <th class="text-center" style="width: 140px;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let c of cuentas">
+                  <td class="text-muted fw-bold">#{{ c.id }}</td>
+                  <td class="fw-semibold">{{ c.nombre }}</td>
+                  <td><span class="badge bg-secondary">{{ c.tipo }}</span></td>
+                  <td><span class="badge bg-light text-dark border">{{ c.moneda }}</span></td>
+                  <td class="text-end fw-bold text-success">
+                    {{ c.moneda }} {{ c.saldo | number:'1.2-2' }}
+                  </td>
+                  <td class="text-center">
+                    <div class="btn-group btn-group-sm">
+                      <button class="btn btn-outline-warning" (click)="seleccionarParaEditar(c)" title="Editar con Formulario 4">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button class="btn btn-outline-danger" (click)="eliminarCuenta(c)" title="Eliminar (DELETE /api/cuentas/{id})">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="cuentas.length === 0">
+                  <td colspan="6" class="text-center py-5 text-muted">
+                    <i class="bi bi-wallet2 fs-2 d-block mb-2"></i>
+                    No se encontraron cuentas. Registre una usando el <strong>Formulario 3</strong>.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

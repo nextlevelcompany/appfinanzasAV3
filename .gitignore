@@ -1,66 +1,119 @@
-HELP.md
+# ==============================================================================
+# .gitignore para Proyecto AppFinanzas (Full Stack: Spring Boot + Angular)
+# ==============================================================================
 
-# Archivos de entorno y credenciales
-.env
-.env.*
-.env*.local
-!.env.example
-
-# Documentos académicos y de presentación (informe, guión, matriz, etc.)
-*.docx
-*.doc
-*.xlsx
-*.xls
-*.pptx
-*.ppt
-*.pdf
-~$*
-Guion_*.md
+# ------------------------------------------------------------------------------
+# 1. Informacion del Proyecto y Documentacion Academica (IGNORAR)
+# ------------------------------------------------------------------------------
+Informacion_proyecto/
+Informacion_proyecto/**
+DOCUMENTACION_*.md
+*DOCUMENTACION*
+*Documentacion*
 *Guion*
+Guion_*.md
 Informe_*
 Matriz_*
 
-# Compilación y artefactos de Gradle
-.gradle/
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
+# ------------------------------------------------------------------------------
+# 2. Archivos de Ofimatica y Presentaciones (Excel, Word, PowerPoint, PDF)
+# ------------------------------------------------------------------------------
+*.xlsx
+*.xls
+*.xlsm
+*.docx
+*.doc
+*.pptx
+*.ppt
+*.pdf
+*.csv
+~$*
+temp_*.xlsx
+*.tmp
 
-# Archivos de IDEs y editores
-### Eclipse / STS ###
+# ------------------------------------------------------------------------------
+# 3. Variables de Entorno, Secretos y Credenciales
+# ------------------------------------------------------------------------------
+.env
+.env.*
+.env*.local
+**/.env
+**/.env.*
+!.env.example
+!backend/.env.example
+
+# ------------------------------------------------------------------------------
+# 4. Backend (Java / Spring Boot / Gradle)
+# ------------------------------------------------------------------------------
+.gradle/
+**/.gradle/
+build/
+**/build/
+out/
+**/out/
+bin/
+**/bin/
+!gradle/wrapper/gradle-wrapper.jar
+!backend/gradle/wrapper/gradle-wrapper.jar
+*.class
+
+# ------------------------------------------------------------------------------
+# 5. Frontend (Angular / Node.js)
+# ------------------------------------------------------------------------------
+node_modules/
+**/node_modules/
+.angular/
+**/.angular/
+dist/
+**/dist/
+tmp/
+**/tmp/
+out-tsc/
+**/out-tsc/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.sass-cache/
+connect.lock
+coverage/
+
+# ------------------------------------------------------------------------------
+# 6. IDEs y Editores de Codigo
+# ------------------------------------------------------------------------------
+# VS Code
+.vscode/
+**/.vscode/
+
+# IntelliJ IDEA
+.idea/
+**/.idea/
+*.iws
+*.iml
+*.ipr
+
+# Eclipse / Spring Tool Suite (STS)
 .apt_generated
 .classpath
 .factorypath
 .project
 .settings/
+**/.settings/
 .springBeans
 .sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
 
-### IntelliJ IDEA ###
-.idea/
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-### VS Code ###
-.vscode/
-
-# Sistema Operativo y temporales
+# ------------------------------------------------------------------------------
+# 7. Sistema Operativo y Logs
+# ------------------------------------------------------------------------------
 .DS_Store
 Thumbs.db
 desktop.ini
 *.log
+logs/
+**/logs/

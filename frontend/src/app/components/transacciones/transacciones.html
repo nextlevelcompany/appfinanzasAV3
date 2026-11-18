@@ -1,0 +1,282 @@
+<div class="container-fluid px-4 py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="fw-bold mb-1">
+        <i class="bi bi-arrow-left-right text-primary me-2"></i>Gestión de Transacciones Financieras
+      </h2>
+      <p class="text-muted mb-0">
+        Controlador: <code>RestTransaccionController</code> (/api/transacciones) | Invocaciones: POST, GET, DELETE, Tipo, Categoría, Rango.
+      </p>
+    </div>
+    <button class="btn btn-outline-secondary btn-sm" (click)="limpiarFiltros()">
+      <i class="bi bi-arrow-counterclockwise me-1"></i> Restablecer Filtros
+    </button>
+  </div>
+
+  <!-- Alertas globales -->
+  <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="bi bi-check-circle-fill me-2"></i>{{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage = ''" aria-label="Close"></button>
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+  </div>
+
+  <div class="row g-4">
+    <!-- Columna Izquierda: Formularios -->
+    <div class="col-lg-5">
+      <!-- FORMULARIO 5: Registrar Transacción (Reactive Form) -->
+      <div class="card shadow-sm border-primary mb-4">
+        <div class="card-header bg-primary text-white py-3">
+          <span class="badge bg-light text-primary float-end">Formulario 5</span>
+          <h5 class="card-title mb-0">
+            <i class="bi bi-plus-circle me-2"></i>Nueva Transacción
+          </h5>
+          <small class="opacity-75">Reactive Form | POST /api/transacciones</small>
+        </div>
+        <div class="card-body p-4">
+          <form [formGroup]="crearTxForm" (ngSubmit)="onCrearTxSubmit()" novalidate>
+            <div class="mb-3">
+              <label for="txDescripcion" class="form-label fw-semibold">Descripción *</label>
+              <input
+                type="text"
+                id="txDescripcion"
+                formControlName="descripcion"
+                class="form-control"
+                [ngClass]="{'is-invalid': crearTxForm.get('descripcion')?.invalid && (crearTxForm.get('descripcion')?.dirty || crearTxForm.get('descripcion')?.touched)}"
+                placeholder="Ej: Pago de nómina mensual"
+              />
+              <div *ngIf="crearTxForm.get('descripcion')?.invalid && (crearTxForm.get('descripcion')?.dirty || crearTxForm.get('descripcion')?.touched)" class="text-danger small mt-1">
+                La descripción es requerida (mínimo 3 caracteres).
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="txMonto" class="form-label fw-semibold">Monto (S/) *</label>
+                <div class="input-group">
+                  <span class="input-group-text">S/</span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    id="txMonto"
+                    formControlName="monto"
+                    class="form-control"
+                    [ngClass]="{'is-invalid': crearTxForm.get('monto')?.invalid && (crearTxForm.get('monto')?.dirty || crearTxForm.get('monto')?.touched)}"
+                    placeholder="0.00"
+                  />
+                </div>
+                <div *ngIf="crearTxForm.get('monto')?.invalid && (crearTxForm.get('monto')?.dirty || crearTxForm.get('monto')?.touched)" class="text-danger small mt-1">
+                  El monto debe ser mayor a 0.
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold d-block">Tipo *</label>
+                <div class="btn-group w-100" role="group">
+                  <input type="radio" class="btn-check" formControlName="tipo" value="INGRESO" id="tipoIngreso" autocomplete="off">
+                  <label class="btn btn-outline-success" for="tipoIngreso">
+                    <i class="bi bi-arrow-down-left me-1"></i> Ingreso
+                  </label>
+
+                  <input type="radio" class="btn-check" formControlName="tipo" value="GASTO" id="tipoGasto" autocomplete="off">
+                  <label class="btn btn-outline-danger" for="tipoGasto">
+                    <i class="bi bi-arrow-up-right me-1"></i> Gasto
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label for="txCategoria" class="form-label fw-semibold">Categoría *</label>
+                <input
+                  type="text"
+                  list="categoriasList"
+                  id="txCategoria"
+                  formControlName="categoria"
+                  class="form-control"
+                  placeholder="Ej: Salario, Alquiler..."
+                />
+                <datalist id="categoriasList">
+                  <option *ngFor="let cat of categorias" [value]="cat.nombre"></option>
+                  <option value="Salario"></option>
+                  <option value="Alimentacion"></option>
+                  <option value="Servicios"></option>
+                  <option value="Transporte"></option>
+                  <option value="Ventas"></option>
+                  <option value="Educacion"></option>
+                </datalist>
+              </div>
+
+              <div class="col-md-6">
+                <label for="txFecha" class="form-label fw-semibold">Fecha (YYYY-MM-DD) *</label>
+                <input
+                  type="date"
+                  id="txFecha"
+                  formControlName="fecha"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': crearTxForm.get('fecha')?.invalid && (crearTxForm.get('fecha')?.dirty || crearTxForm.get('fecha')?.touched)}"
+                />
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" [disabled]="crearTxForm.invalid || isCreando">
+              <span *ngIf="isCreando" class="spinner-border spinner-border-sm me-2" role="status"></span>
+              <i *ngIf="!isCreando" class="bi bi-save me-2"></i>
+              <span *ngIf="isCreando">Guardando transacción...</span>
+              <span *ngIf="!isCreando">Registrar Transacción</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- FORMULARIO 6: Filtro por Rango de Fechas (Template-driven Form) -->
+      <div class="card shadow-sm border-info mb-4">
+        <div class="card-header bg-info text-dark py-3">
+          <span class="badge bg-dark text-white float-end">Formulario 6</span>
+          <h5 class="card-title mb-0">
+            <i class="bi bi-calendar-range me-2"></i>Filtro por Rango de Fechas
+          </h5>
+          <small class="text-muted">Template-driven Form | GET /api/transacciones/rango</small>
+        </div>
+        <div class="card-body p-4">
+          <form #rangoForm="ngForm" (ngSubmit)="onFiltroRangoSubmit(rangoForm)" novalidate>
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="rangoDesde" class="form-label fw-semibold">Desde *</label>
+                <input
+                  type="date"
+                  id="rangoDesde"
+                  name="rangoDesde"
+                  class="form-control"
+                  [(ngModel)]="filtroRango.desde"
+                  #desdeModel="ngModel"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label for="rangoHasta" class="form-label fw-semibold">Hasta *</label>
+                <input
+                  type="date"
+                  id="rangoHasta"
+                  name="rangoHasta"
+                  class="form-control"
+                  [(ngModel)]="filtroRango.hasta"
+                  #hastaModel="ngModel"
+                  required
+                />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-info w-100 fw-semibold text-dark" [disabled]="rangoForm.invalid">
+              <i class="bi bi-search me-2"></i>Consultar por Rango
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- FORMULARIO 7: Filtro por Tipo y Categoría (Reactive Form) -->
+      <div class="card shadow-sm border-secondary">
+        <div class="card-header bg-secondary text-white py-3">
+          <span class="badge bg-light text-dark float-end">Formulario 7</span>
+          <h5 class="card-title mb-0">
+            <i class="bi bi-funnel me-2"></i>Filtro por Tipo y Categoría
+          </h5>
+          <small class="opacity-75">Reactive Form | GET /api/transacciones/tipo & /categoria</small>
+        </div>
+        <div class="card-body p-4">
+          <form [formGroup]="filtroTipoCatForm" (ngSubmit)="onFiltroTipoCatSubmit()" novalidate>
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="filtroTipo" class="form-label fw-semibold">Tipo</label>
+                <select id="filtroTipo" formControlName="tipo" class="form-select">
+                  <option value="TODOS">Todos los tipos</option>
+                  <option value="INGRESO">Solo INGRESOS</option>
+                  <option value="GASTO">Solo GASTOS</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="filtroCat" class="form-label fw-semibold">Categoría (Texto)</label>
+                <input
+                  type="text"
+                  id="filtroCat"
+                  formControlName="categoriaTexto"
+                  class="form-control"
+                  placeholder="Ej: Salario o Alimen..."
+                />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-secondary w-100 fw-semibold">
+              <i class="bi bi-filter me-2"></i>Aplicar Filtro
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna Derecha: Tabla de Transacciones -->
+    <div class="col-lg-7">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0 fw-bold">
+            <i class="bi bi-list-ul text-primary me-2"></i>Listado de Transacciones
+          </h5>
+          <span class="badge bg-primary rounded-pill">{{ transacciones.length }} movimientos</span>
+        </div>
+        <div class="card-body p-0">
+          <div *ngIf="isLoading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="text-muted mt-2">Invocando servicio REST...</p>
+          </div>
+
+          <div *ngIf="!isLoading" class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 50px;">ID</th>
+                  <th>Fecha</th>
+                  <th>Descripción</th>
+                  <th>Categoría</th>
+                  <th>Tipo</th>
+                  <th class="text-end">Monto</th>
+                  <th class="text-center" style="width: 80px;">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let t of transacciones">
+                  <td class="text-muted fw-bold">#{{ t.id }}</td>
+                  <td><small class="text-muted">{{ t.fecha }}</small></td>
+                  <td class="fw-semibold">{{ t.descripcion }}</td>
+                  <td><span class="badge bg-light text-dark border">{{ t.categoria || 'Sin categoría' }}</span></td>
+                  <td>
+                    <span class="badge" [ngClass]="{'bg-success': t.tipo === 'INGRESO', 'bg-danger': t.tipo === 'GASTO'}">
+                      {{ t.tipo }}
+                    </span>
+                  </td>
+                  <td class="text-end fw-bold" [ngClass]="{'text-success': t.tipo === 'INGRESO', 'text-danger': t.tipo === 'GASTO'}">
+                    {{ t.tipo === 'INGRESO' ? '+' : '-' }} S/ {{ t.monto | number:'1.2-2' }}
+                  </td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-danger btn-sm" (click)="eliminarTransaccion(t)" title="Eliminar (DELETE /api/transacciones/{id})">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="transacciones.length === 0">
+                  <td colspan="7" class="text-center py-5 text-muted">
+                    <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                    No se encontraron transacciones con los criterios seleccionados.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
